@@ -1,0 +1,284 @@
+{
+	"info": {
+		"_postman_id": "ff24de35-1448-4ad6-a5da-231c6b891c98",
+		"name": "Training",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Employee",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var id = +pm.collectionVariables.get(\"employee_id\");\r",
+							"pm.collectionVariables.set(\"employee_id\", ++id);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([201, 202]);\r",
+							"});\r",
+							"\r",
+							"let response = pm.response.json(),\r",
+							"    CreateRequestBody = JSON.stringify(response);\r",
+							"\r",
+							"pm.collectionVariables.set(\"CreateRequestBody\", CreateRequestBody);\r",
+							"\r",
+							"postman.setNextRequest('Verify Create Employee');\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\r\n    \"id\": \"Sofiya_{{employee_id}}\",\r\n    \"first_name\": \"{{$randomFirstName}}\",\r\n    \"last_name\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/employees",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"employees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Create Employee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Created employee exists\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"postman.setNextRequest('Edit Employee');\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/employees/Sofiya_{{employee_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"employees",
+						"Sofiya_{{employee_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Employee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json(),\r",
+							"    UpdateRequestBody = JSON.stringify(response);\r",
+							"\r",
+							"pm.collectionVariables.set(\"UpdateRequestBody\", UpdateRequestBody);\r",
+							"\r",
+							"pm.test(\"Employee info updated\", function () {\r",
+							"    let response = pm.response.json(),\r",
+							"    UpdateRequestBody = JSON.stringify(response);\r",
+							"    pm.expect(UpdateRequestBody).to.not.eql(pm.environment.get(\"CreateRequestBody\"));\r",
+							"})\r",
+							"\r",
+							"postman.setNextRequest('Delete Employee');"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\r\n    \"id\": \"Sofiya_{{employee_id}}\",\r\n    \"first_name\": \"{{$randomFirstName}}\",\r\n    \"last_name\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/employees/Sofiya_{{employee_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"employees",
+						"Sofiya_{{employee_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Employee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"postman.setNextRequest('Verify Delete Employee');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/employees/Sofiya_{{employee_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"employees",
+						"Sofiya_{{employee_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify Delete Employee",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Employee deleted successfully\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});\r",
+							"\r",
+							"postman.setNextRequest('null');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/employees/Sofiya_{{employee_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"employees",
+						"Sofiya_{{employee_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "employee_id",
+			"value": ""
+		},
+		{
+			"key": "name",
+			"value": ""
+		},
+		{
+			"key": "CreateRequestBody",
+			"value": ""
+		},
+		{
+			"key": "UpdateRequestBody",
+			"value": ""
+		}
+	]
+}
